@@ -23,6 +23,13 @@ A modern, cyberpunk-themed productivity dashboard built with vanilla JavaScript.
 - **Vanilla JavaScript** - Object-Oriented (Class-based) architecture with no frameworks
 - **Local Storage API** - Client-side data persistence with robust error handling
 
+## 🏆 Challenge Achievements
+
+As part of the project requirements, I have successfully implemented the following 3 challenges:
+- 🌗 **Light / Dark Mode**: A persistent theme switcher that remembers user preference using Local Storage.
+- 👤 **Custom Name in Greeting**: Editable user name with real-time saving and persistence across sessions.
+- 🚫 **Prevent Duplicate Tasks**: Case-insensitive validation logic to ensure the task list remains unique and organized.
+
 ## 🏗️ Project Architecture
 
 The application follows a modular component-based architecture with clear separation of concerns:
