@@ -4,81 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life Dashboard - Ilham x ReVoU</title>
-    <!-- CSS Internal/External -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Font Awesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="dark-theme">
 
-    <main class="container">
-        <!-- HEADER: Identitas & Waktu -->
-        <header class="card header-card">
-            <h1 id="greeting">Good Morning, <span id="display-name" contenteditable="true">Ilham</span></h1>
-            <div class="time-container">
-                <h2 id="clock">00:00:00</h2>
-                <p id="date">Tuesday, January 27, 2026</p>
+    <header class="header-section">
+        <div class="container">
+            <div class="card header-card">
+                <h1 id="greeting">Good Morning, <span id="display-name" contenteditable="true">Ilham</span></h1>
+                <div class="time-container">
+                    <h2 id="clock">00:00:00</h2>
+                    <p id="date">Tuesday, January 27, 2026</p>
+                </div>
+                <button id="theme-toggle" aria-label="Toggle Theme">Change Theme</button>
             </div>
-            <button id="theme-toggle" aria-label="Toggle Theme">Change Theme</button>
-        </header>
-
-        <!-- MAIN CONTENT: Grid Fitur -->
-        <div class="main-grid">
-            <!-- Focus Timer Section -->
-            <section class="card timer-card">
-                <h3><i class="fas fa-stopwatch"></i> Focus Timer</h3>
-                <div class="timer-display" id="timer">25:00</div>
-                <div class="timer-controls">
-                    <button id="start-btn">Start</button>
-                    <button id="stop-btn">Stop</button>
-                    <button id="reset-btn">Reset</button>
-                </div>
-            </section>
-
-            <!-- Tasks Section -->
-            <section class="card todo-card">
-                <h3><i class="fas fa-list-ul"></i> Tasks</h3>
-                <div class="input-group">
-                    <input type="text" id="todo-input" placeholder="Add a new task...">
-                    <button id="add-todo">Add</button>
-                </div>
-                <ul id="todo-list"></ul>
-            </section>
-
-            <!-- Quick Links Section -->
-            <section class="card links-card">
-                <h3><i class="fas fa-link"></i> Quick Links</h3>
-                <div class="input-group">
-                    <input type="text" id="link-name" placeholder="Name">
-                    <input type="text" id="link-url" placeholder="URL (https://...)">
-                    <button id="add-link">Add Link</button>
-                </div>
-                <div id="links-container" class="links-grid"></div>
-            </section>
         </div>
+    </header>
 
-        <!-- NAVIGATION: Social Sidebar -->
-        <nav class="sidebar-social" aria-label="Social Media Links">
-            <a href="https://instagram.com/m.ilsetiawan1" target="_blank" class="side-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://github.com/ilsetiawan1" target="_blank" class="side-icon" title="GitHub"><i class="fab fa-github"></i></a>
-            <a href="https://tiktok.com/@m.ilsetiawan1" target="_blank" class="side-icon" title="TikTok"><i class="fab fa-tiktok"></i></a>
-        </nav>
+    <main class="main-content">
+        <div class="container">
+            <div class="main-grid">
+                <section class="card timer-card">
+                    <h3><i class="fas fa-stopwatch"></i> Focus Timer</h3>
+                    <div class="timer-display" id="timer">25:00</div>
+                    <div class="timer-controls">
+                        <button id="start-btn">Start</button>
+                        <button id="stop-btn">Stop</button>
+                        <button id="reset-btn">Reset</button>
+                    </div>
+                </section>
+
+<section class="card todo-card">
+    <h3><i class="fas fa-list-ul"></i> Tasks</h3>
+    <div class="input-group">
+        <input type="text" id="todo-input" placeholder="Add a new task...">
+        <button id="add-todo">Add</button>
+    </div>
+    <small id="todo-error" style="color: #e74c3c; display: block; margin-bottom: 10px; text-align: left; min-height: 1em;"></small>
     
-        <!-- ASIDE: Branding Logo -->
-        <aside class="floating-logo-container">
-            <a href="https://www.revou.co/" target="_blank" title="Go to ReVoU Website">
-                <img src="images/revou-logo.jpg" alt="ReVoU Logo" class="revou-logo">
-            </a>
-        </aside>
+    <ul id="todo-list"></ul>
+</section>
 
-        <!-- FOOTER: Copyright -->
-        <footer class="footer-section">
-            <p>&copy; 2026 <strong>Muhammad Ilham Setiawan</strong>. All Rights Reserved.</p>
-        </footer>
+                <section class="card links-card">
+    <h3><i class="fas fa-link"></i> Quick Links</h3>
+    <div class="input-group">
+        <input type="text" id="link-name" placeholder="Name">
+        <input type="text" id="link-url" placeholder="URL (https://...)">
+        <button id="add-link">Add Link</button>
+    </div>
+    <div id="links-container" class="links-grid"></div>
+</section>
+            </div>
+        </div>
     </main>
 
+    <footer class="footer-section">
+        <div class="container">
+            <p>&copy; 2026 <strong>Muhammad Ilham Setiawan</strong>. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-    <!-- Script Utama -->
+    <nav class="sidebar-social" aria-label="Social Media Links">
+        <a href="https://instagram.com/m.ilsetiawan1" target="_blank" class="side-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://github.com/ilsetiawan1" target="_blank" class="side-icon" title="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://tiktok.com/@m.ilsetiawan1" target="_blank" class="side-icon" title="TikTok"><i class="fab fa-tiktok"></i></a>
+    </nav>
+
+    <aside class="floating-logo-container">
+        <a href="https://www.revou.co/" target="_blank" title="Go to ReVoU Website">
+            <img src="images/revou-logo.jpg" alt="ReVoU Logo" class="revou-logo">
+        </a>
+    </aside>
+
     <script src="js/script.js"></script>
 </body>
 </html>

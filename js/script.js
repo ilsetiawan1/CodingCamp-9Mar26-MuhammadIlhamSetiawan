@@ -1,21 +1,14 @@
 // ===================================
 // StorageService Class
 // ===================================
-
 class StorageService {
     constructor() {
         this.available = this.isAvailable();
-        
-        // Show warning if storage is unavailable
         if (!this.available) {
             this.showStorageWarning();
         }
     }
     
-    /**
-     * Checks if Local Storage is available
-     * @returns {boolean} Availability status
-     */
     isAvailable() {
         try {
             const test = '__storage_test__';
@@ -27,89 +20,32 @@ class StorageService {
         }
     }
     
-    /**
-     * Retrieves and parses data from Local Storage
-     * @param {string} key - Storage key
-     * @param {*} defaultValue - Value to return if key doesn't exist
-     * @returns {*} Parsed data or defaultValue
-     */
     get(key, defaultValue = null) {
-        if (!this.available) {
-            console.warn('Local Storage is not available');
-            return defaultValue;
-        }
-        
+        if (!this.available) return defaultValue;
         try {
             const item = localStorage.getItem(key);
-            
-            if (item === null) {
-                return defaultValue;
-            }
-            
-            // Try to parse as JSON, if it fails return as string
+            if (item === null) return defaultValue;
             try {
                 return JSON.parse(item);
             } catch (e) {
                 return item;
             }
         } catch (error) {
-            console.error(`Error reading from storage (key: ${key}):`, error);
             return defaultValue;
         }
     }
     
-    /**
-     * Serializes and stores data in Local Storage
-     * @param {string} key - Storage key
-     * @param {*} value - Data to store
-     * @returns {boolean} Success status
-     */
     set(key, value) {
-        if (!this.available) {
-            console.warn('Local Storage is not available');
-            return false;
-        }
-        
+        if (!this.available) return false;
         try {
-            // Serialize value to JSON if it's an object/array
             const serialized = typeof value === 'string' ? value : JSON.stringify(value);
             localStorage.setItem(key, serialized);
             return true;
         } catch (error) {
             if (error.name === 'QuotaExceededError') {
-                console.error('Storage quota exceeded. Please delete some items.');
-                alert('Storage limit reached. Please delete some items to continue.');
-            } else {
-                console.error(`Error writing to storage (key: ${key}):`, error);
+                alert('Storage limit reached!');
             }
             return false;
-        }
-    }
-    
-    /**
-     * Removes data from Local Storage
-     * @param {string} key - Storage key
-     */
-    remove(key) {
-        if (!this.available) {
-            console.warn('Local Storage is not available');
-            return;
-        }
-        
-        try {
-            localStorage.removeItem(key);
-        } catch (error) {
-            console.error(`Error removing from storage (key: ${key}):`, error);
-        }
-    }
-    
-    /**
-     * Shows warning banner when storage is unavailable
-     */
-    showStorageWarning() {
-        const warningBanner = document.getElementById('storage-warning');
-        if (warningBanner) {
-            warningBanner.hidden = false;
         }
     }
 }
@@ -117,104 +53,43 @@ class StorageService {
 // ===================================
 // ThemeManager Class
 // ===================================
-
 class ThemeManager {
     constructor(storage) {
         this.storage = storage;
         this.themeToggleBtn = document.getElementById('theme-toggle');
-        this.currentTheme = this.loadTheme();
+        this.currentTheme = this.storage.get('theme', 'dark');
         
-        // Apply saved theme on initialization
         this.applyTheme(this.currentTheme);
         
-        // Set up event listener
         if (this.themeToggleBtn) {
             this.themeToggleBtn.addEventListener('click', () => this.toggle());
         }
     }
     
-    /**
-     * Loads theme preference from storage
-     * @returns {string} 'dark' or 'light'
-     */
-    loadTheme() {
-        const savedTheme = this.storage.get('theme', 'dark');
-        return savedTheme;
-    }
-    
-    /**
-     * Applies theme to the document
-     * @param {string} theme - 'dark' or 'light'
-     */
     applyTheme(theme) {
-        const body = document.body;
-        
-        // Remove both theme classes first
-        body.classList.remove('dark-theme', 'light-theme');
-        
-        // Add the selected theme class
-        body.classList.add(`${theme}-theme`);
-        
-        // Update button icon if button exists
-        if (this.themeToggleBtn) {
-            this.updateThemeIcon(theme);
-        }
-        
-        // Save to storage
+        document.body.classList.remove('dark-theme', 'light-theme');
+        document.body.classList.add(`${theme}-theme`);
+        this.updateThemeIcon(theme);
         this.storage.set('theme', theme);
-        
         this.currentTheme = theme;
     }
     
-    /**
-     * Updates the theme toggle button icon
-     * @param {string} theme - 'dark' or 'light'
-     */
     updateThemeIcon(theme) {
-        const icon = this.themeToggleBtn.querySelector('i');
-        
-        if (icon) {
-            if (theme === 'dark') {
-                icon.className = 'fas fa-moon';
-                this.themeToggleBtn.setAttribute('aria-label', 'Switch to light mode');
-            } else {
-                icon.className = 'fas fa-sun';
-                this.themeToggleBtn.setAttribute('aria-label', 'Switch to dark mode');
-            }
-        }
+        if (!this.themeToggleBtn) return;
+        const icon = this.themeToggleBtn.querySelector('i') || this.themeToggleBtn;
+        // Jika pakai ikon FontAwesome, kita update class-nya
+        this.themeToggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
     }
     
-    /**
-     * Toggles between light and dark themes
-     */
     toggle() {
         const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
         this.applyTheme(newTheme);
     }
-    
-    /**
-     * Gets the current theme
-     * @returns {string} Current theme ('dark' or 'light')
-     */
-    getCurrentTheme() {
-        return this.currentTheme;
-    }
 }
-
-// ===================================
-// Initialize Services
-// ===================================
-
-// Create global storage service instance
-const storageService = new StorageService();
-
-// Create global theme manager instance
-const themeManager = new ThemeManager(storageService);
 
 // ===================================
 // GreetingComponent Class
 // ===================================
-
 class GreetingComponent {
     constructor(storage) {
         this.storage = storage;
@@ -223,10 +98,7 @@ class GreetingComponent {
         this.greetingElement = document.getElementById('greeting');
         this.nameElement = document.getElementById('display-name');
         
-        // Initialize name
         this.initializeName();
-        
-        // Start clock updates
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
     }
@@ -235,15 +107,9 @@ class GreetingComponent {
         const now = new Date();
         const hours = now.getHours();
         
-        if (this.clockElement) {
-            this.clockElement.innerText = now.toLocaleTimeString();
-        }
+        if (this.clockElement) this.clockElement.innerText = now.toLocaleTimeString();
+        if (this.dateElement) this.dateElement.innerText = now.toDateString();
         
-        if (this.dateElement) {
-            this.dateElement.innerText = now.toDateString();
-        }
-        
-        // Update greeting based on time
         let greetingText = "Good Night";
         if (hours < 12) greetingText = "Good Morning";
         else if (hours < 18) greetingText = "Good Afternoon";
@@ -359,51 +225,46 @@ class FocusTimerComponent {
 // ===================================
 // TaskManagerComponent Class
 // ===================================
-
 class TaskManagerComponent {
     constructor(storage) {
         this.storage = storage;
         this.tasks = this.storage.get('tasks', []);
         
+        // Element Selectors
         this.todoInput = document.getElementById('todo-input');
         this.addTodoBtn = document.getElementById('add-todo');
         this.todoList = document.getElementById('todo-list');
-        this.todoError = document.getElementById('todo-error');
+        this.todoError = document.getElementById('todo-error'); // Pastikan ID ini ada di HTML
         
-        // Set up event listeners
+        // Event Listeners
         if (this.addTodoBtn) {
             this.addTodoBtn.onclick = () => this.createTask();
         }
         
         if (this.todoInput) {
             this.todoInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.createTask();
-                }
+                if (e.key === 'Enter') this.createTask();
             });
         }
         
-        // Initial render
         this.render();
     }
     
-    /**
-     * Creates new task if valid and not duplicate
-     * @returns {boolean} Success status
-     */
     createTask() {
-        if (!this.todoInput) return false;
+        if (!this.todoInput) return;
         
         const text = this.todoInput.value.trim();
         
+        // 1. Validasi Kosong
         if (!text) {
             this.showError('Task cannot be empty');
-            return false;
+            return;
         }
         
+        // 2. Validasi Duplikat (Challenge)
         if (this.isDuplicate(text)) {
             this.showError('Task already exists!');
-            return false;
+            return; // Berhenti di sini, jangan lanjut push data
         }
         
         const task = {
@@ -418,16 +279,8 @@ class TaskManagerComponent {
         this.todoInput.value = '';
         this.clearError();
         this.render();
-        
-        return true;
     }
     
-    /**
-     * Checks if task text already exists (case-insensitive)
-     * @param {string} text - Task text to check
-     * @param {string} excludeId - Task ID to exclude from check (for editing)
-     * @returns {boolean} True if duplicate exists
-     */
     isDuplicate(text, excludeId = null) {
         const lowerText = text.toLowerCase();
         return this.tasks.some(task => 
@@ -435,10 +288,6 @@ class TaskManagerComponent {
         );
     }
     
-    /**
-     * Toggles task completion status
-     * @param {string} taskId - Task ID
-     */
     toggleComplete(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
         if (task) {
@@ -448,105 +297,73 @@ class TaskManagerComponent {
         }
     }
     
-    /**
-     * Updates task text
-     * @param {string} taskId - Task ID
-     * @returns {boolean} Success status
-     */
     editTask(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
-        if (!task) return false;
+        if (!task) return;
         
         const newText = prompt("Edit your task:", task.text);
-        
-        if (newText === null || newText.trim() === "") {
-            return false;
-        }
+        if (newText === null) return;
         
         const trimmedText = newText.trim();
-        
+        if (!trimmedText) return;
+
         if (this.isDuplicate(trimmedText, taskId)) {
             alert('A task with this text already exists!');
-            return false;
+            return;
         }
         
         task.text = trimmedText;
         this.saveTasks();
         this.render();
-        
-        return true;
     }
     
-    /**
-     * Deletes task
-     * @param {string} taskId - Task ID
-     */
     deleteTask(taskId) {
         this.tasks = this.tasks.filter(t => t.id !== taskId);
         this.saveTasks();
         this.render();
     }
     
-    /**
-     * Persists current tasks to storage
-     */
     saveTasks() {
         this.storage.set('tasks', this.tasks);
     }
     
-    /**
-     * Displays error message to user
-     * @param {string} message - Error message
-     */
     showError(message) {
         if (this.todoError) {
             this.todoError.textContent = message;
+            // Hilangkan pesan error otomatis setelah 3 detik
             setTimeout(() => this.clearError(), 3000);
+        } else {
+            // Fallback jika elemen HTML lupa dibuat
+            alert(message);
         }
     }
     
-    /**
-     * Clears error message
-     */
     clearError() {
-        if (this.todoError) {
-            this.todoError.textContent = '';
-        }
+        if (this.todoError) this.todoError.textContent = '';
     }
     
-    /**
-     * Renders task list
-     */
     render() {
         if (!this.todoList) return;
-        
         this.todoList.innerHTML = '';
         
         this.tasks.forEach(task => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <span class="todo-text ${task.completed ? 'done' : ''}" data-id="${task.id}">
+                <span class="todo-text ${task.completed ? 'done' : ''}">
                     ${task.text}
                 </span>
                 <div class="todo-btns">
-                    <button data-id="${task.id}" data-action="edit" title="Edit Task">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button data-id="${task.id}" data-action="delete" title="Delete Task">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <button class="edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>
             `;
             
-            // Add event listeners
-            const textSpan = li.querySelector('.todo-text');
-            textSpan.onclick = () => this.toggleComplete(task.id);
-            
-            const editBtn = li.querySelector('[data-action="edit"]');
-            editBtn.onclick = () => this.editTask(task.id);
-            
-            const deleteBtn = li.querySelector('[data-action="delete"]');
-            deleteBtn.onclick = () => this.deleteTask(task.id);
+            // Klik teks untuk toggle done
+            li.querySelector('.todo-text').onclick = () => this.toggleComplete(task.id);
+            // Tombol edit
+            li.querySelector('.edit-btn').onclick = () => this.editTask(task.id);
+            // Tombol hapus
+            li.querySelector('.delete-btn').onclick = () => this.deleteTask(task.id);
             
             this.todoList.appendChild(li);
         });
@@ -704,15 +521,16 @@ class QuickLinksComponent {
 // Application Initialization
 // ===================================
 
-// Initialize all components when DOM is ready
+const storageService = new StorageService();
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize components
+    // Inisialisasi ThemeManager di sini agar selector button aman
+    const themeManager = new ThemeManager(storageService);
+    
     const greetingComponent = new GreetingComponent(storageService);
     const focusTimer = new FocusTimerComponent();
     const taskManager = new TaskManagerComponent(storageService);
     const quickLinks = new QuickLinksComponent(storageService);
     
-    console.log('Application initialized successfully');
-    console.log('Current theme:', themeManager.getCurrentTheme());
-    console.log('Storage available:', storageService.available);
+    console.log('Dashboard Initialized with New HTML Structure');
 });
